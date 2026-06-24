@@ -38,6 +38,7 @@ class ChatMessage(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    username: Mapped[str | None] = mapped_column(String(255), nullable=True)
     sender: Mapped[str] = mapped_column(String(16))  # user | admin
     text: Mapped[str | None] = mapped_column(Text, nullable=True)
     content_type: Mapped[str] = mapped_column(String(32), default="text")
