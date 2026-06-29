@@ -3,26 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import AdminMessageLink, ChatMessage, Material, User
 
-DEFAULT_MATERIALS = [
-    {
-        "title": "Наш сайт",
-        "url": "https://example.com",
-        "description": "Основной сайт с информацией",
-        "sort_order": 1,
-    },
-    {
-        "title": "Telegram-канал",
-        "url": "https://t.me/example",
-        "description": "Полезные материалы и новости",
-        "sort_order": 2,
-    },
-    {
-        "title": "YouTube",
-        "url": "https://youtube.com/@example",
-        "description": "Видеоуроки и разборы",
-        "sort_order": 3,
-    },
-]
+
 
 
 async def seed_default_materials(session: AsyncSession) -> None:

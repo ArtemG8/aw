@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from config import conf
 from database.crud import get_active_materials, get_or_create_user
 from handlers.admin_handlers import set_admin_menu
-from keyboards import chat_menu_kb, main_menu_kb, materials_inline_kb
+from keyboards import chat_menu_kb, main_menu_kb
 from lexicon import LEXICON_RU
 from services.message_relay import notify_admins_about_user_message
 from states import ChatFSM
@@ -27,6 +27,22 @@ async def _register_user(message: Message, session: AsyncSession):
     )
 
 
+def _format_material(material) -> str:
+    line = f"📒 {material.description} - "
+    if material.url:
+        line += f"<code>{material.url}</code> "
+        
+    return line
+
+
+def _build_materials_block(materials: list, header: str | None = None) -> str:
+    lines: list[str] = []
+    if header:
+        lines.extend([header, ""])
+    lines.extend(_format_material(material) for material in materials)
+    return "\n".join(lines)
+
+
 async def send_welcome(message: Message, session: AsyncSession) -> None:
     materials = await get_active_materials(session)
     text_lines = [
@@ -36,12 +52,7 @@ async def send_welcome(message: Message, session: AsyncSession) -> None:
 
     if materials:
         text_lines.append("")
-        text_lines.append(LEXICON_RU["materials_header"])
-        for material in materials:
-            line = f"• <a href=\"{material.url}\">{material.title}</a>"
-            if material.description:
-                line += f" — {material.description}"
-            text_lines.append(line)
+        text_lines.append(_build_materials_block(materials, LEXICON_RU["materials_header"]))
     else:
         text_lines.append("")
         text_lines.append(LEXICON_RU["no_materials"])
@@ -75,16 +86,9 @@ async def show_materials(message: Message, session: AsyncSession) -> None:
         await message.answer(LEXICON_RU["no_materials"], reply_markup=main_menu_kb())
         return
 
-    text_lines = [LEXICON_RU["materials_header"], ""]
-    for material in materials:
-        line = f"• <a href=\"{material.url}\">{material.title}</a>"
-        if material.description:
-            line += f" — {material.description}"
-        text_lines.append(line)
-
     await message.answer(
-        "\n".join(text_lines),
-        reply_markup=materials_inline_kb(materials) or main_menu_kb(),
+        _build_materials_block(materials, LEXICON_RU["materials_header"]),
+        reply_markup=main_menu_kb(),
         disable_web_page_preview=True,
     )
 

@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
+from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 
 from lexicon import LEXICON_RU
@@ -16,17 +16,6 @@ def chat_menu_kb() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
     builder.button(text=LEXICON_RU["btn_menu"])
     return builder.as_markup(resize_keyboard=True)
-
-
-def materials_inline_kb(materials: list) -> InlineKeyboardMarkup | None:
-    if not materials:
-        return None
-
-    builder = InlineKeyboardBuilder()
-    for material in materials:
-        builder.button(text=material.title, url=material.url)
-    builder.adjust(1)
-    return builder.as_markup()
 
 
 USERS_PER_PAGE = 25
