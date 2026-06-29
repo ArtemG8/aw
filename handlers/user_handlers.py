@@ -30,7 +30,7 @@ async def _register_user(message: Message, session: AsyncSession):
 def _format_material(material) -> str:
     line = f"📒 {material.description} - "
     if material.url:
-        line += f"<code>{material.url}</code> "
+        line += f"<code>{material.url}</code>\n"
         
     return line
 
